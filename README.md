@@ -35,7 +35,7 @@ ___
 - Two approaches were taken to solve the problem of computing all possible increasing permutations of a list of digits:
     - The brute force approach tackled the problem by imcrementing the total value of the list of digits by one and checking if the new total value was a permutation of the original list of digits
     - The refined approach performed an inplace swap algorithm to guarantee the next largest permutation is found without the need to check values that are not possible permutations
-### Discussion Post 3: [Quicksort Analysis](%Discussion%20Post%203/)
+### Discussion Post 3: [Quicksort Analysis](Discussion%20Post%203/)
 - A look at quicksort and a modified quicksort which utilizes a *partition limit* for using insertion sort. With lists of small enough size, insertion sort can have a faster real-world runtime since it does not have to handle overhead from recursive function calls. 
 
 ### Critical Thinking 3: [Sorting Algorithm Comparison](Critical%20Thinking%203/)

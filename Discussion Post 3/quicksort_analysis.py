@@ -1,6 +1,5 @@
-import karls_python_library as kpl
+import funcs as fc
 import random
-
 def quicksort(array, left, right):
 
     # Recursive base case
@@ -87,8 +86,8 @@ def insertion_sort(array, l, r):
         # Insert the value to proper location in array
         array[j] = value
 
-qs_run = kpl.Runtime(print=False)
-hqs_run = kpl.Runtime(print=False)
+qs_run = fc.Runtime(print=False)
+hqs_run = fc.Runtime(print=False)
 
 arr1_1 = [2,7,0,-2,4,-5,7,12,7]
 arr2_1 = [-4,-9,2,4,-6,14,867,124,-432,4]
@@ -111,8 +110,8 @@ hybrid_quicksort(arr1_2,0,len(arr1_2)-1, 4)
 hqs_run.stop()
 
 print("Sorted: {}".format(arr1_1))
-print("Quicksort Runtime        : {} us".format(kpl.round_dec(qs_run.elapsed_time * (10 ** 6), 3)))
-print("Hybrid Quicksort Runtime : {} us".format(kpl.round_dec(hqs_run.elapsed_time * (10 ** 6), 3)))
+print("Quicksort Runtime        : {} us".format(fc.round_dec(qs_run.elapsed_time * (10 ** 6), 3)))
+print("Hybrid Quicksort Runtime : {} us".format(fc.round_dec(hqs_run.elapsed_time * (10 ** 6), 3)))
 
 
 print("\nArray: {}".format(arr2_1))
@@ -126,8 +125,8 @@ hybrid_quicksort(arr2_2,0,len(arr2_2)-1, 4)
 hqs_run.stop()
 
 print("Sorted: {}".format(arr2_1))
-print("Quicksort Runtime        : {} us".format(kpl.round_dec(qs_run.elapsed_time * (10 ** 6), 3)))
-print("Hybrid Quicksort Runtime : {} us".format(kpl.round_dec(hqs_run.elapsed_time * (10 ** 6), 3)))
+print("Quicksort Runtime        : {} us".format(fc.round_dec(qs_run.elapsed_time * (10 ** 6), 3)))
+print("Hybrid Quicksort Runtime : {} us".format(fc.round_dec(hqs_run.elapsed_time * (10 ** 6), 3)))
 
 
 print("\nArray: {}".format(arr3_1))
@@ -141,8 +140,8 @@ hybrid_quicksort(arr3_2,0,len(arr3_2)-1, 4)
 hqs_run.stop()
 
 print("Sorted: {}".format(arr3_1))
-print("Quicksort Runtime        : {} us".format(kpl.round_dec(qs_run.elapsed_time * (10 ** 6), 3)))
-print("Hybrid Quicksort Runtime : {} us".format(kpl.round_dec(hqs_run.elapsed_time * (10 ** 6), 3)))
+print("Quicksort Runtime        : {} us".format(fc.round_dec(qs_run.elapsed_time * (10 ** 6), 3)))
+print("Hybrid Quicksort Runtime : {} us".format(fc.round_dec(hqs_run.elapsed_time * (10 ** 6), 3)))
 
 
 

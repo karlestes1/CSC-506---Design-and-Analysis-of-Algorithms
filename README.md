@@ -54,5 +54,15 @@ ___
 ### Critical Thinking 6: [Binary Search Tree](Critical%20Thinking%206/)
 - A simple binary search tree was constructred for this assignment. The tree is able to construct itself in a balanced manner when an array of data is provided to the initialization function. Otherwise it can handle insertions and removals, but it does not guarantee maintenance of balance on these operations. 
 ___
-## Portfolio Project
-**Information regarding the portfolio project will be coming soon!**
+## Portfolio Project: [Analysis of Algorithms and Data Structures](Portfolio%20Project/)
+The porfolio project for this class presented two options: The analysis of algorithms and data structures or the creation and analysis of retroactive search trees. I chose to go with first option and compare the efficiency of various list implementations in an arbitrarily created problem. 
+
+**Designed Problem** - There exists a pile of books and a series of bookshelves. The books must be placed on the bookshelves following a particular sorting schema, but each shelf can only hold a certain number of books. The books must be placed in sorted order without exceeding the limits of the shelves, and once placed, books will be added and removed. Each addition and removal will result in the books automatically adjusting themselves so no gap is left in the assortment and so no shelf is overcapacity. If a previous shelf has room, all the books should be shifted until only the last shelf containing books has accumulated any extra space within the system. The underlying data structure for the shelf storage is currently unknown, and the tradeoffs of various solutions should be explored.
+
+The project will asses the efficiency of list operations with the following implementations:
+- A Python List
+- A Numpy Array
+- A Linked List
+- A Linked List with an AVL Search Tree
+
+*Note: This project is ongoing and will be completed by August 1st, 2021. Since this project is ongoing, the exact implementations and operations examined are subject to change.*

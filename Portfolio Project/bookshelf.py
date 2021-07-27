@@ -202,6 +202,23 @@ class Shelf():
         return False
     # !FUNCTION - removeBook
     
+    def removeFront(self)->Book:
+        """Removes the book at the front of the shelf"""
+        
+        if self.isEmpty():
+            return None
+        
+        if self.architecture == ARCHITECTURE.PYTHON_LIST:
+            book = self.bookList.pop(0)
+        elif self.architecture == ARCHITECTURE.NUMPY_ARRAY:
+            book = self.bookList[0]
+            self.bookList = np.delete(self.bookList, [0])
+        elif self.architecture == ARCHITECTURE.DOUBLY_LINKED_LIST or self.architecture == ARCHITECTURE.DOUBLY_LINKED_LIST_AVL:
+            book = self.bookList.removeAtFront().value
+
+        self.curSize -= book.pages
+        return book
+
     # FUNCTION - findBook
     
     def findBooks(self, name: str = None, pages: int = None, isbn: int = None) -> list:
@@ -355,23 +372,46 @@ class BookCase():
         removed will be returned.
         """
 
-        # NOTE - Potential optimization by determine which shelf to add to without checking all of them
+        overflow = self.shelves[0].addBook(newBook)
+        temp=[]
 
-        toAdd = []
-        overflow = []
-        toAdd.append(newBook)
+        for i in range(1, len(self.shelves)):
 
-        for i in range(len(self.shelves)):
-            overflow.clear()
-            for book in toAdd:
-                overflow.append(self.shelves[i].addBook(book))
-            toAdd = deepcopy(overflow)
+            if len(overflow) == 0:
+                return
+
+            for book in overflow:
+                temp.append(self.shelves[i].addBook(book))
             
-        return overflow
+            overflow.clear()
+            overflow = deepcopy(temp)
+            temp.clear()
+
     
     # !FUNCTION - add
 
-    # TODO - remove()
+    # FUNCTION - remove
+    
+    def remove(self, book: Book) -> bool:
+        """ Removes a book from the bookshelf and shifts any remaining books to ensure there is no empty space """
+    
+        removed = False
+        for i in range(len(self.shelves)):
+            removed = self.shelves[i].removeBook(book)
+
+            if removed == True:
+                # Handle shifting of all future shelves
+                if i < len(self.shelves)-1:
+                    for j in range(i+1, len(self.shelves)):
+
+                        # Check length of book at front
+
+                        # Remove book if needed
+                        pass
+                break
+
+        return removed
+    # !FUNCTION - remove
 
     # TODO - search()
 

@@ -241,7 +241,7 @@ class Shelf():
         matches = []
 
         if name == None and pages == None and isbn == None:
-            return None
+            return matches
     
         # Perform search based on the underlying architecture
         if self.architecture == ARCHITECTURE.PYTHON_LIST:
@@ -402,22 +402,32 @@ class BookCase():
             if removed == True:
                 # Handle shifting of all future shelves
                 if i < len(self.shelves)-1:
-                    for j in range(i+1, len(self.shelves)):
+                    for j,k in zip(range(i, len(self.shelves)-1),range(i+1, len(self.shelves))):
+                        nextBook = self.shelves[k].peek()
 
-                        # Check length of book at front
-
-                        # Remove book if needed
-                        pass
+                        while nextBook != None:
+                            if (self.shelves[j].curSize + nextBook.pages) <= self.shelves[j].maxSize:
+                                self.shelves[j].addBook(self.shelves[k].removeFront())
+                                nextBook = self.shelves[k].peek()
+                            else:
+                                nextBook = None
                 break
 
         return removed
     # !FUNCTION - remove
 
-    # TODO - search()
+    # FUNCTION - search
+    
+    def search(self, name: str = None, pages: int = None, isbn: int = None) -> list:
+        """ Searches the book case for all books matching the given criteria """
+        found = []
 
-    # TODO - sort()
+        for i in range(len(self.shelves)):
+            found.append(self.shelves[i].findBooks(name, pages, isbn))
 
-    # TODO - Update Sort Scheme Function
+        return found
+    
+    # !FUNCTION - search
 
 # !CLASS - BookCase
 

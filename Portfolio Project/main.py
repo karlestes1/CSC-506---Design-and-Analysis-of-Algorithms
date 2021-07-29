@@ -41,10 +41,11 @@ def loadData() -> pd.DataFrame:
         df = pd.read_csv(dataPath, usecols=columnList)
         df['num_pages'] = df['num_pages'].astype(np.int64, errors="raise")
         df['isbn13'] = df['isbn13'].astype(np.int64, errors="raise")
-        print(f"Data loaded: {fg(82)}Success{attr(0)}")
+        print(f"Data load: {fg(82)}Success{attr(0)}")
         return df
     except:
-        print(f"Data loaded: {fg(196)}Failed{attr(0)} - {error}")
+        print(f"Data load: {fg(196)}Failed{attr(0)} - {error}")
+        exit(0)
 
 
 def clearTerminal():

@@ -30,6 +30,8 @@ from colored import fg, bg, attr
 from typing import List
 from copy import deepcopy
 
+from numpy.core.numeric import argwhere
+
 import data_structures as ds
 import numpy as np
 import progressbar
@@ -47,7 +49,6 @@ class ARCHITECTURE(Enum):
     PYTHON_LIST = 1
     NUMPY_ARRAY = 2
     DOUBLY_LINKED_LIST = 3
-    DOUBLY_LINKED_LIST_AVL = 4
 
 # !SECTION
 
@@ -113,11 +114,7 @@ class Shelf():
             self.bookList = np.array()
         elif self.architecture == ARCHITECTURE.DOUBLY_LINKED_LIST:
             self.bookList = ds.LinkedList()
-        elif self.architecture == ARCHITECTURE.DOUBLY_LINKED_LIST_AVL:
-            # TODO - Add creation for LL with AVL
-            pass
 
-    # FUNCTION - addBook
     def addBook(self, book: Book) -> list:
         """
         Adds a book to the shelf. Internally, the add is done based on the architecture of the shelf as determined
@@ -143,24 +140,33 @@ class Shelf():
                 overflow.append(extra)
 
         elif self.architecture == ARCHITECTURE.NUMPY_ARRAY:
-            # TODO - Implement Add Functionality for Numpy Arrays
+            
+            # Insert the book
+            bisect.insort(self.bookList, book)
+            self.curSize += book.pages
+
+            # Remove overflow
+            while self.curSize > self.maxSize:
+                extra, self.bookList = self.bookList[-1], self.bookList[:-1]
+                self.curSize -= extra.pages
+                overflow.append(extra)
+
             pass
 
         elif self.architecture == ARCHITECTURE.DOUBLY_LINKED_LIST:
-            # TODO - Implement Add Functionality for Doubly Linked List
-            pass
+            
+            # Insert the book
+            self.bookList.insertInOrder(book)
 
-        elif self.architecture == ARCHITECTURE.DOUBLY_LINKED_LIST_AVL:
-            # TODO - Implement Add Functionality for Doubly Linked List with AVL Tree
-            pass
+            # Remove overflow
+            while self.bookList.length > self.maxSize:
+                overflow.append(self.bookList.removeAtBack())
+
+            # Update shelf size
+            self.curSize = self.bookList.length
 
         return overflow
     
-    # !FUNCTION - addBook
-    
-    # FUNCTION - removeBook
-    
-    # REVIEW - Should all removals of sub-architectures return a boolean value?
     def removeBook(self, book: Book) -> bool:
         """ 
         Description
@@ -190,17 +196,19 @@ class Shelf():
                 return False
 
         elif self.architecture == ARCHITECTURE.NUMPY_ARRAY:
-            # TODO - Implement remove functionality for NumPy Array
-            pass
+            results = np.where(self.bookList == book)
+
+            if len(results) != 0:
+                self.bookList = np.delete(self.bookList, results)
+                return True
+            
+            return False
         elif self.architecture == ARCHITECTURE.DOUBLY_LINKED_LIST:
-            # TODO - Implement remove functionality for Doubly Linked List
-            pass
-        elif self.architecture == ARCHITECTURE.DOUBLY_LINKED_LIST_AVL:
-            # TODO - Implement remove functionality for Doubly Linked List w/ AVL Tree
-            pass
+            
+            return self.removeBook(book)
+            
     
         return False
-    # !FUNCTION - removeBook
     
     def removeFront(self)->Book:
         """Removes the book at the front of the shelf"""
@@ -212,14 +220,12 @@ class Shelf():
             book = self.bookList.pop(0)
         elif self.architecture == ARCHITECTURE.NUMPY_ARRAY:
             book = self.bookList[0]
-            self.bookList = np.delete(self.bookList, [0])
+            self.bookList = self.bookList[1:]
         elif self.architecture == ARCHITECTURE.DOUBLY_LINKED_LIST or self.architecture == ARCHITECTURE.DOUBLY_LINKED_LIST_AVL:
             book = self.bookList.removeAtFront().value
 
         self.curSize -= book.pages
         return book
-
-    # FUNCTION - findBook
     
     def findBooks(self, name: str = None, pages: int = None, isbn: int = None) -> list:
         """ 
@@ -251,70 +257,34 @@ class Shelf():
                     matches.append(book)
 
         elif self.architecture == ARCHITECTURE.NUMPY_ARRAY:
-            # TODO - Implement find functionality for NumPy Array
-            pass
+
+            for book in progressbar.progressbar(self.bookList):
+                if (name == None or name == book.name) and (pages == None or pages == book.pages) and (isbn == None or isbn == book.isbn):
+                    matches.append(book)
+
         elif self.architecture == ARCHITECTURE.DOUBLY_LINKED_LIST:
-            # TODO - Implement find functionality for Doubly Linked List
-            pass
-        elif self.architecture == ARCHITECTURE.DOUBLY_LINKED_LIST_AVL:
-            # TODO - Implement find functionality for Doubly Linked List w/ AVL Tree
-            pass
+            
+            curNode = self.bookList.head      
+
+            # Creates a progress bar with no percentage. It simply moves back and forth to show the program is running
+            # and keeps track of the number of update iterations and the elapsed time
+            bar = progressbar.ProgressBar(max_value=progressbar.UnknownLength)
+            while curNode != None:
+                if (name == None or name == curNode.value.name) and (pages == None or pages == curNode.value.pages) and (isbn == None or isbn == curNode.value.isbn):
+                    matches.append(curNode.value)
+                bar.update()
     
         return matches
 
-    # !FUNCTION - findBook
+    def search(self, book: Book) -> bool:
+        """ Searches the shelf for a specific book and returns true if the book is found"""
 
-    # FUNCTION - sortBooks
-    
-    def sortBooks(self):
-        """ 
-        Sorts the books on the shelf based on the underlying sort schema. To update the sort schema, use the 
-        `updateSortMethod()` function. Sorting will occur based on the underlying architecture:
-
-        * Python List -> Built in Sort
-        * NumPy Array -> ??? (REVIEW - What sort for numpy array)
-        * Doubly Linked List -> Modified Insertion Sort
-        * Doubly List with AVL Tree -> Modified Insertion with Tree Reconstruction
-        """
-    
-        # Perform sort based on the underlying architecture
         if self.architecture == ARCHITECTURE.PYTHON_LIST:
-            self.bookList.sort()
-
+            return True if book in self.bookList else False
         elif self.architecture == ARCHITECTURE.NUMPY_ARRAY:
-            # TODO - Implement sort functionality for NumPy Array
-            pass
+            return True if len(np.where(self.bookList == book)) != 0 else False
         elif self.architecture == ARCHITECTURE.DOUBLY_LINKED_LIST:
-            # TODO - Implement sort functionality for Doubly Linked List
-            pass
-        elif self.architecture == ARCHITECTURE.DOUBLY_LINKED_LIST_AVL:
-            # TODO - Implement sort functionality for Doubly Linked List w/ AVL Tree
-            pass
-    
-    # !FUNCTION - sortBooks
-
-    # FUNCTION - updateSortMethod
-    
-    def updateSortMethod(self, sortScheme: SORT):
-        """ Updates the internal sort mechanism for all book objects on the shelf """
-
-        # Perform sort update based on the underlying architecture
-        if self.architecture == ARCHITECTURE.PYTHON_LIST:
-
-            for i in progressbar.progressbar(range(len(self.bookList))):
-                self.bookList[i].sort = sortScheme
-
-        elif self.architecture == ARCHITECTURE.NUMPY_ARRAY:
-            # TODO - Implement sort update functionality for NumPy Array
-            pass
-        elif self.architecture == ARCHITECTURE.DOUBLY_LINKED_LIST:
-            # TODO - Implement sort update functionality for Doubly Linked List
-            pass
-        elif self.architecture == ARCHITECTURE.DOUBLY_LINKED_LIST_AVL:
-            # TODO - Implement sort update functionality for Doubly Linked List w/ AVL Tree
-            pass
-    
-    # !FUNCTION - updateSortMethod
+            return self.bookList.search(book)
 
     def isEmpty(self) -> bool:
         # Perform sort based on the underlying architecture
@@ -323,8 +293,6 @@ class Shelf():
         elif self.architecture == ARCHITECTURE.NUMPY_ARRAY:
             return True if len(self.bookList) == 0 else False
         elif self.architecture == ARCHITECTURE.DOUBLY_LINKED_LIST:
-            return self.bookList.isEmpty()
-        elif self.architecture == ARCHITECTURE.DOUBLY_LINKED_LIST_AVL:
             return self.bookList.isEmpty()
 
     def peek(self):
@@ -339,8 +307,6 @@ class Shelf():
             return self.bookList[0]
         elif self.architecture == ARCHITECTURE.DOUBLY_LINKED_LIST:
             return self.bookList.head.value
-        elif self.architecture == ARCHITECTURE.DOUBLY_LINKED_LIST_AVL:
-            return self.bookList.head.value
 # !CLASS
 
 # CLASS - BookCase
@@ -348,7 +314,6 @@ class Shelf():
 class BookCase():
     """ TODO - Bookcase Description """
     
-    # FUNCTION - __init__
     
     def __init__(self, numShelves: int = 4, shelfSize: int = 10000, architecture: ARCHITECTURE = ARCHITECTURE.PYTHON_LIST):
 
@@ -361,11 +326,7 @@ class BookCase():
             self.shelves.append(Shelf(shelfSize, architecture))
 
         print(f"{fg(82)}Initialized BookCase{attr(0)} - {numShelves} shelves with capacity for {shelfSize} pages each")
-    
-    # !FUNCTION - __init__
-
-    # FUNCTION - add
-    
+     
     def add(self, newBook: Book) -> List[Book]:
         """ 
         Adds a to the bookcase in proper order. If there is no room for all the books, a list of the books that were
@@ -386,12 +347,7 @@ class BookCase():
             overflow.clear()
             overflow = deepcopy(temp)
             temp.clear()
-
-    
-    # !FUNCTION - add
-
-    # FUNCTION - remove
-    
+ 
     def remove(self, book: Book) -> bool:
         """ Removes a book from the bookshelf and shifts any remaining books to ensure there is no empty space """
     
@@ -414,11 +370,8 @@ class BookCase():
                 break
 
         return removed
-    # !FUNCTION - remove
-
-    # FUNCTION - search
-    
-    def search(self, name: str = None, pages: int = None, isbn: int = None) -> list:
+  
+    def findBooks(self, name: str = None, pages: int = None, isbn: int = None) -> list:
         """ Searches the book case for all books matching the given criteria """
         found = []
 
@@ -426,8 +379,14 @@ class BookCase():
             found.append(self.shelves[i].findBooks(name, pages, isbn))
 
         return found
-    
-    # !FUNCTION - search
+
+    def search(self, book: Book) -> bool:
+        """Searches the bookcase for a specific book and returns true if found"""
+        for i in range(len(self.shelves)):
+            if self.shelves[i].search(book) == True:
+                return True
+
+        return False
 
 # !CLASS - BookCase
 

@@ -85,6 +85,17 @@ class Book():
                 return True if self.isbn < o.isbn else False
         return False
 
+    def __le__(self, o: object) -> bool:
+        
+        if isinstance(o, Book):
+            if self.sort == SORT.TITLE:
+                return True if self.title <= o.title else False
+            elif self.sort == SORT.LENGTH:
+                return True if self.pages <= o.pages else False
+            elif self.sort == SORT.ISBN:
+                return True if self.isbn <= o.isbn else False
+        return False
+
     def __gt__(self, o: object) -> bool:
         
         if isinstance(o, Book):
@@ -94,6 +105,17 @@ class Book():
                 return True if self.pages > o.pages else False
             elif self.sort == SORT.ISBN:
                 return True if self.isbn > o.isbn else False
+        return False
+
+    def __gt__(self, o: object) -> bool:
+        
+        if isinstance(o, Book):
+            if self.sort == SORT.TITLE:
+                return True if self.title >= o.title else False
+            elif self.sort == SORT.LENGTH:
+                return True if self.pages >= o.pages else False
+            elif self.sort == SORT.ISBN:
+                return True if self.isbn >= o.isbn else False
         return False
 
 # !CLASS
@@ -111,7 +133,7 @@ class Shelf():
         if self.architecture == ARCHITECTURE.PYTHON_LIST:
             self.bookList = []
         elif self.architecture == ARCHITECTURE.NUMPY_ARRAY:
-            self.bookList = np.array()
+            self.bookList = np.array([], dtype=Book)
         elif self.architecture == ARCHITECTURE.DOUBLY_LINKED_LIST:
             self.bookList = ds.LinkedList()
 
@@ -142,7 +164,14 @@ class Shelf():
         elif self.architecture == ARCHITECTURE.NUMPY_ARRAY:
             
             # Insert the book
-            bisect.insort(self.bookList, book)
+            # bisect.insort(self.bookList, book)
+            # self.curSize += book.pages
+            
+            # self.bookList = np.append(self.bookList, [book])
+            # self.bookList.sort()
+
+            ii = np.searchsorted(self.bookList, book)
+            self.bookList = np.insert(self.bookList, ii, book)
             self.curSize += book.pages
 
             # Remove overflow
@@ -157,13 +186,14 @@ class Shelf():
             
             # Insert the book
             self.bookList.insertInOrder(book)
+            # Update shelf size
+            self.curSize += book.pages
 
             # Remove overflow
-            while self.bookList.length > self.maxSize:
-                overflow.append(self.bookList.removeAtBack())
-
-            # Update shelf size
-            self.curSize = self.bookList.length
+            while self.curSize > self.maxSize:
+                temp = self.bookList.removeAtBack().value
+                self.curSize -= temp.pages
+                overflow.append(temp)
 
         return overflow
     
@@ -200,12 +230,16 @@ class Shelf():
 
             if len(results) != 0:
                 self.bookList = np.delete(self.bookList, results)
+                self.curSize -= book.pages
                 return True
             
             return False
         elif self.architecture == ARCHITECTURE.DOUBLY_LINKED_LIST:
             
-            return self.removeBook(book)
+            removed =  self.bookList.remove(book)
+            if removed == True:
+                self.curSize -= book.pages
+            return removed
             
     
         return False
@@ -334,7 +368,8 @@ class BookCase():
         """
 
         overflow = self.shelves[0].addBook(newBook)
-        temp=[]
+        tempOverflow=[]
+        temp = []
 
         for i in range(1, len(self.shelves)):
 
@@ -342,11 +377,14 @@ class BookCase():
                 return
 
             for book in overflow:
-                temp.append(self.shelves[i].addBook(book))
+                temp = self.shelves[i].addBook(book)
+                if len(temp) != 0:
+                    for item in temp:
+                        tempOverflow.append(item)
             
             overflow.clear()
-            overflow = deepcopy(temp)
-            temp.clear()
+            overflow = deepcopy(tempOverflow)
+            tempOverflow.clear()
  
     def remove(self, book: Book) -> bool:
         """ Removes a book from the bookshelf and shifts any remaining books to ensure there is no empty space """
@@ -364,6 +402,8 @@ class BookCase():
                         while nextBook != None:
                             if (self.shelves[j].curSize + nextBook.pages) <= self.shelves[j].maxSize:
                                 self.shelves[j].addBook(self.shelves[k].removeFront())
+                                self.shelves[j].curSize += nextBook.pages
+                                self.shelves[k].curSize -= nextBook.pages
                                 nextBook = self.shelves[k].peek()
                             else:
                                 nextBook = None

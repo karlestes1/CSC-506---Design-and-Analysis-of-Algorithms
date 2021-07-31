@@ -38,7 +38,7 @@ class ListNode():
     # Overloaded Comparison Operators
     def __eq__(self, o: object) -> bool:
 
-        if isinstance(self, o):
+        if isinstance(o, ListNode):
             return True if self.value == o.value else False
         else:
             return True if self.value == o else False
@@ -52,21 +52,21 @@ class ListNode():
 
     def __le__(self, o: object) -> bool:
 
-        if isinstance(self, o):
+        if isinstance(o, ListNode):
             return True if self.value <= o.value else False
         else:
             return True if self.value <= o else False
 
     def __gt__(self, o: object) -> bool:
 
-        if isinstance(self, o):
+        if isinstance(o, ListNode):
             return True if self.value > o.value else False
         else:
             return True if self.value > o else False
 
     def __ge__(self, o: object) -> bool:
 
-        if isinstance(self, o):
+        if isinstance(o, ListNode):
             return True if self.value >= o.value else False
         else:
             return True if self.value >= o else False
@@ -120,6 +120,7 @@ class LinkedList():
         newNode = ListNode(value)
         if self.length == 0:
             self.head = self.tail = newNode
+            self.length = 1
         else:
             curNode = self.head
 
@@ -187,7 +188,18 @@ class LinkedList():
             # Item Found
             if curNode == item:
                 # Reassign pointers
-                curNode.prev.next, curNode.next.prev = curNode.next, curNode.prev
+                if curNode is self.head and curNode is self.tail:
+                    self.head = self.tail = None
+                elif curNode is self.head:
+                    curNode.next.prev = curNode.prev
+                    self.head = curNode.next
+                elif curNode is self.tail:
+                    curNode.prev.next = curNode.next
+                    self.tail = curNode.prev
+                else:
+                    curNode.prev.next, curNode.next.prev = curNode.next, curNode.prev
+
+                self.length -= 1
                 return True
 
             # Item not Found

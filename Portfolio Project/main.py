@@ -28,6 +28,7 @@ import os
 import bookshelf
 import numpy as np
 import progressbar
+import time
 from os import error, system, name
 from colored import fg, bg, attr
 
@@ -46,6 +47,92 @@ def loadData() -> pd.DataFrame:
     except:
         print(f"Data load: {fg(196)}Failed{attr(0)} - {error}")
         exit(0)
+
+def runTests(iterations):
+    """Run all of the tests and records the data for the provided number of iterations"""
+
+    data = loadData()
+    totalPages = data['num_pages'].sum()
+    results = []
+    columns = ['Python Insert', 'Numpy Insert', 'Linked List Insert', 'Python Search', 'Numpy Search', 'Linked List Search', 'Python Delete', 'Numpy Delete', 'Linked List Delete']
+
+    # TODO - Add print statements
+    # Run the tests for the provided number of iterations
+    for i in progressbar.progressbar(range(iterations), redirect_stdout=True):
+
+        # Shuffle data for specific test
+        shuffledData = data.sample(frac=1.0, random_state=i)
+        searchData = data.sample(n=100, random_state=i)
+        deleteData = data.sample(n=100, random_state=i*i)
+
+        # Run one of each test
+        for j in range(1, 5):
+
+            results.clear()
+
+            # Calculate size of shelves and search/delete data
+            if j == 1:
+                size = totalPages//4
+            elif j == 2:
+                size = totalPages * 0.75 // 4
+            elif j == 3:
+                size = totalPages * 0.5 // 4
+            elif j == 4:
+                size = totalPages * 0.25 // 4
+
+            # Create 3 bookcases
+            pythonBookcase = bookshelf.BookCase(4, size, bookshelf.ARCHITECTURE.PYTHON_LIST)
+            numpyBookcase = bookshelf.BookCase(4, size, bookshelf.ARCHITECTURE.NUMPY_ARRAY)
+            linkedListBookcase = bookshelf.BookCase(4, size, bookshelf.ARCHITECTURE.DOUBLY_LINKED_LIST)
+
+            # Test adding
+            start = time.time_ns()
+            for item in range(shuffledData.shape[0]):
+                pythonBookcase.add(bookshelf.Book(shuffledData['title'][item], shuffledData['num_pages'][item], shuffledData['isbn13'][item]))
+            end = time.time_ns()
+            results.append(end-start)
+
+            start = time.time_ns()
+            for item in range(shuffledData.shape[0]):
+                numpyBookcase.add(bookshelf.Book(shuffledData['title'][item], shuffledData['num_pages'][item], shuffledData['isbn13'][item]))
+            end = time.time_ns()
+            results.append(end-start)
+
+            start = time.time_ns()
+            for item in range(shuffledData.shape[0]):
+                linkedListBookcase.add(bookshelf.Book(shuffledData['title'][item], shuffledData['num_pages'][item], shuffledData['isbn13'][item]))
+            end = time.time_ns()
+            results.append(end-start)
+
+            # Test searching
+            start = time.time_ns()
+            for item in range(searchData.shape[0]):
+                pythonBookcase.search(bookshelf.Book(searchData['title'][item], searchData['num_pages'][item], searchData['isbn13'][item]))
+            end = time.time_ns()
+            results.append(end-start)
+
+            start = time.time_ns()
+            for item in range(searchData.shape[0]):
+                numpyBookcase.search(bookshelf.Book(searchData['title'][item], searchData['num_pages'][item], searchData['isbn13'][item]))
+            end = time.time_ns()
+            results.append(end-start)
+
+            start = time.time_ns()
+            for item in range(searchData.shape[0]):
+                linkedListBookcase.search(bookshelf.Book(searchData['title'][item], searchData['num_pages'][item], searchData['isbn13'][item]))
+            end = time.time_ns()
+            results.append(end-start)
+
+
+
+
+            # Test Removals
+            start = time.time_ns()
+
+            end = time.time_ns()
+
+
+
 
 
 def clearTerminal():

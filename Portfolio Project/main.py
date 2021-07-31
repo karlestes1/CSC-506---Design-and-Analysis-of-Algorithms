@@ -28,6 +28,7 @@ import os
 import bookshelf
 import numpy as np
 import progressbar
+import time
 from os import error, system, name
 from colored import fg, bg, attr
 
@@ -46,6 +47,126 @@ def loadData() -> pd.DataFrame:
     except:
         print(f"Data load: {fg(196)}Failed{attr(0)} - {error}")
         exit(0)
+
+def runTests(iterations):
+    """Run all of the tests and records the data for the provided number of iterations"""
+
+    data = loadData()
+    totalPages = data['num_pages'].sum()
+    results = []
+    columns = ['Python Insert', 'Numpy Insert', 'Linked List Insert', 'Python Search', 'Numpy Search', 'Linked List Search', 'Python Delete', 'Numpy Delete', 'Linked List Delete']
+    dfFull, dfThreeQuater, dfHalf, dfQuarter = pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), pd.DataFrame()
+
+    # TODO - Add print statements
+    # Run the tests for the provided number of iterations
+    
+    for i in range(iterations):
+
+        print(f"\n\n***** Running Iteration - {i+1} out of {iterations} *****\n\n")
+
+        # Shuffle data for specific test
+        shuffledData = data.sample(frac=1, random_state=i)
+        searchData = data.sample(frac=.1, random_state=i)
+        deleteData = data.sample(frac=.1, random_state=i*i)
+
+        # Run one of each test
+        for j in range(1, 5):
+
+            print(f"\n*** Running Subtest - {j} of iteration - {i + 1} ***\n")
+
+            results.clear()
+
+            # Calculate size of shelves and search/delete data
+            if j == 1:
+                size = totalPages//4
+            elif j == 2:
+                size = totalPages * 0.75 // 4
+            elif j == 3:
+                size = totalPages * 0.5 // 4
+            elif j == 4:
+                size = totalPages * 0.25 // 4
+
+            # Create 3 bookcases
+            pythonBookcase = bookshelf.BookCase(4, size, bookshelf.ARCHITECTURE.PYTHON_LIST)
+            numpyBookcase = bookshelf.BookCase(4, size, bookshelf.ARCHITECTURE.NUMPY_ARRAY)
+            linkedListBookcase = bookshelf.BookCase(4, size, bookshelf.ARCHITECTURE.DOUBLY_LINKED_LIST)
+
+            # Test adding
+            start = time.time_ns()
+            for item in progressbar.progressbar(range(shuffledData.shape[0])):
+                pythonBookcase.add(bookshelf.Book(shuffledData.iloc[item]['title'], shuffledData.iloc[item]['num_pages'], shuffledData.iloc[item]['isbn13']))
+            end = time.time_ns()
+            results.append(end-start)
+
+            start = time.time_ns()
+            for item in progressbar.progressbar(range(shuffledData.shape[0])):
+                numpyBookcase.add(bookshelf.Book(shuffledData.iloc[item]['title'], shuffledData.iloc[item]['num_pages'], shuffledData.iloc[item]['isbn13']))
+            end = time.time_ns()
+            results.append(end-start)
+
+            start = time.time_ns()
+            for item in progressbar.progressbar(range(shuffledData.shape[0])):
+                linkedListBookcase.add(bookshelf.Book(shuffledData.iloc[item]['title'], shuffledData.iloc[item]['num_pages'], shuffledData.iloc[item]['isbn13']))
+            end = time.time_ns()
+            results.append(end-start)
+
+            # Test searching
+            start = time.time_ns()
+            for item in progressbar.progressbar(range(searchData.shape[0])):
+                pythonBookcase.search(bookshelf.Book(searchData.iloc[item]['title'], searchData.iloc[item]['num_pages'], searchData.iloc[item]['isbn13']))
+            end = time.time_ns()
+            results.append(end-start)
+
+            start = time.time_ns()
+            for item in progressbar.progressbar(range(searchData.shape[0])):
+                numpyBookcase.search(bookshelf.Book(searchData.iloc[item]['title'], searchData.iloc[item]['num_pages'], searchData.iloc[item]['isbn13']))
+            end = time.time_ns()
+            results.append(end-start)
+
+            start = time.time_ns()
+            for item in progressbar.progressbar(range(searchData.shape[0])):
+                linkedListBookcase.search(bookshelf.Book(searchData.iloc[item]['title'], searchData.iloc[item]['num_pages'], searchData.iloc[item]['isbn13']))
+            end = time.time_ns()
+            results.append(end-start)
+
+            # Test Removals
+            start = time.time_ns()
+            for item in progressbar.progressbar(range(deleteData.shape[0])):
+                pythonBookcase.remove(bookshelf.Book(deleteData.iloc[item]['title'], deleteData.iloc[item]['num_pages'], deleteData.iloc[item]['isbn13']))
+            end = time.time_ns()
+            results.append(end-start)
+
+            start = time.time_ns()
+            for item in progressbar.progressbar(range(deleteData.shape[0])):
+                numpyBookcase.remove(bookshelf.Book(deleteData.iloc[item]['title'], deleteData.iloc[item]['num_pages'], deleteData.iloc[item]['isbn13']))
+            end = time.time_ns()
+            results.append(end-start)
+
+            start = time.time_ns()
+            for item in progressbar.progressbar(range(deleteData.shape[0])):
+                linkedListBookcase.remove(bookshelf.Book(deleteData.iloc[item]['title'], deleteData.iloc[item]['num_pages'], deleteData.iloc[item]['isbn13']))
+            end = time.time_ns()
+            results.append(end-start)
+
+            if j == 1:
+                dfFull = dfFull.append(pd.DataFrame([results], columns=columns), ignore_index=True)
+                dfFull.to_csv('results/FullSize.csv')
+            if j == 2:
+                dfThreeQuater = dfThreeQuater.append(pd.DataFrame([results], columns=columns), ignore_index=True)
+                dfThreeQuater.to_csv('results/ThreeQuarterSize.csv')
+            if j == 3:
+                dfHalf = dfHalf.append(pd.DataFrame([results], columns=columns), ignore_index=True)
+                dfHalf.to_csv('results/HalfSize.csv')
+            if j == 4:
+                dfQuarter = dfQuarter.append(pd.DataFrame([results], columns=columns), ignore_index=True)
+                dfQuarter.to_csv('results/QuarterSize.csv')
+                
+    dfFull.to_csv('results/FullSize.csv')
+    dfThreeQuater.to_csv('results/ThreeQuarterSize.csv')
+    dfHalf.to_csv('results/HalfSize.csv')
+    dfQuarter.to_csv('results/QuarterSize.csv')
+
+
 
 
 def clearTerminal():
@@ -67,38 +188,9 @@ def main():
     # Changes the working directory to whatever the parent directory of the script executing the code is
     os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
-    # Load the book data
-    df = loadData()
+    runTests(25)
 
-    maxSize = df['num_pages'].sum()
-
-    bookc = bookshelf.BookCase(numShelves=1)
-
-    # NOTE - TESTING SHELF
-    shelf = bookshelf.Shelf(size=maxSize)
-
-
-
-    for i in  progressbar.progressbar(range(df.shape[0]), redirect_stdout=True):
-        # Make book
-        shelf.addBook(bookshelf.Book(df['title'][i], df['num_pages'][i], df['isbn13'][i]))
-
-    books = shelf.findBooks(pages=352)
-
-    for book in books:
-        if shelf.removeBook(book):
-            print(f"Removed book: {book.title}")
-        else:
-            print(f"remove failed for {book.title}, {book.pages}")
-
-    print("Updating books to sort by ISBN")
-    shelf.updateSortMethod(bookshelf.SORT.ISBN)
-    print("Sorting by ISBN")
-    shelf.sortBooks()
-    print("Updating books to sort by LENGTH")
-    shelf.updateSortMethod(bookshelf.SORT.LENGTH)
-    print("Sorting by Length")
-    shelf.sortBooks()
+    print("\n ***** TESTING COMPLETE ***** \n")
     
 
 if __name__ == "__main__":

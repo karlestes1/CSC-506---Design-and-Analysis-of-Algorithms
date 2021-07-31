@@ -62,12 +62,12 @@ def runTests(iterations):
     
     for i in range(iterations):
 
-        print(f"\n\n***** Running Iteration - {i+1} *****\n\n")
+        print(f"\n\n***** Running Iteration - {i+1} out of {iterations} *****\n\n")
 
         # Shuffle data for specific test
-        shuffledData = data.sample(frac=.2, random_state=i)
-        searchData = data.sample(n=100, random_state=i)
-        deleteData = data.sample(n=100, random_state=i*i)
+        shuffledData = data.sample(frac=1, random_state=i)
+        searchData = data.sample(frac=.1, random_state=i)
+        deleteData = data.sample(frac=.1, random_state=i*i)
 
         # Run one of each test
         for j in range(1, 5):
@@ -150,12 +150,16 @@ def runTests(iterations):
 
             if j == 1:
                 dfFull = dfFull.append(pd.DataFrame([results], columns=columns), ignore_index=True)
+                dfFull.to_csv('results/FullSize.csv')
             if j == 2:
                 dfThreeQuater = dfThreeQuater.append(pd.DataFrame([results], columns=columns), ignore_index=True)
+                dfThreeQuater.to_csv('results/ThreeQuarterSize.csv')
             if j == 3:
                 dfHalf = dfHalf.append(pd.DataFrame([results], columns=columns), ignore_index=True)
+                dfHalf.to_csv('results/HalfSize.csv')
             if j == 4:
                 dfQuarter = dfQuarter.append(pd.DataFrame([results], columns=columns), ignore_index=True)
+                dfQuarter.to_csv('results/QuarterSize.csv')
                 
     dfFull.to_csv('results/FullSize.csv')
     dfThreeQuater.to_csv('results/ThreeQuarterSize.csv')
@@ -184,7 +188,7 @@ def main():
     # Changes the working directory to whatever the parent directory of the script executing the code is
     os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
-    runTests(3)
+    runTests(25)
 
     print("\n ***** TESTING COMPLETE ***** \n")
     

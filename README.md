@@ -2,13 +2,12 @@
 
 **Disclaimer:** These projects were built as a requirement for CSC 506: Design and Analysis of Algorithms at Colorado State University Global under the instruction of Dr. Pubali Banerjee. Unless otherwise noted, all programs were created to adhere to explicit guidelines as outlined in the assignment requirements I was given. Descriptions of each [programming assignment](#programming-assignments) and the [portfolio project](#portfolio-project) can be found below.
 
-*****This repository is actively being updated and will be archived upon my completion of the class*****
+*****This repository was archived upon completion of the class*****
 ___
 
 ### Languages and Tools
 <!--TODO add links to each icons site-->
 <img align="left" height="32" width="32" src="https://cdn.svgporn.com/logos/python.svg" />
-<img align="left" height="32" width="32" src="https://cdn.svgporn.com/logos/github-octocat.svg" />
 <img align="left" height="32" width="32" src="https://www.psych.mcgill.ca/labs/mogillab/anaconda2/lib/python2.7/site-packages/anaconda_navigator/static/images/anaconda-icon-512x512.png" />
 <img align="left" height="32" width="32" src="https://cdn.svgporn.com/logos/visual-studio-code.svg" />
 <img align="left" height="32" width="32" src="https://cdn.svgporn.com/logos/git-icon.svg" />
@@ -16,7 +15,7 @@ ___
 <br />
 
 ### Textbook
-The textbook for this class is Data Structures Essentials: Psueodocde with Python Examples by Roman Lysecky and Frank Vahid. The textbook was accessed and delivered through [ZyBooks](https://zybooks.com). 
+The textbook for this class was Data Structures Essentials: Psueodocde with Python Examples by Roman Lysecky and Frank Vahid. The textbook was accessed and delivered through [ZyBooks](https://zybooks.com). 
 <br />
 
 ### VS Code Comment Anchors Extension

@@ -7,11 +7,11 @@ ___
 
 ### Languages and Tools
 <!--TODO add links to each icons site-->
-<img align="left" height="32" width="32" src="https://cdn.svgporn.com/logos/python.svg" />
-<img align="left" height="32" width="32" src="https://www.psych.mcgill.ca/labs/mogillab/anaconda2/lib/python2.7/site-packages/anaconda_navigator/static/images/anaconda-icon-512x512.png" />
-<img align="left" height="32" width="32" src="https://cdn.svgporn.com/logos/visual-studio-code.svg" />
-<img align="left" height="32" width="32" src="https://cdn.svgporn.com/logos/git-icon.svg" />
-<img align="left" height="32" width="32" src="https://cdn.svgporn.com/logos/gitkraken.svg" />
+[<img align="left" height="32" width="32" src="https://cdn.svgporn.com/logos/python.svg" />](https://www.python.org)
+[<img align="left" height="32" width="32" src="https://www.psych.mcgill.ca/labs/mogillab/anaconda2/lib/python2.7/site-packages/anaconda_navigator/static/images/anaconda-icon-512x512.png" />](https://www.anaconda.com/pricing)
+[<img align="left" height="32" width="32" src="https://cdn.svgporn.com/logos/visual-studio-code.svg" />](https://code.visualstudio.com)
+[<img align="left" height="32" width="32" src="https://cdn.svgporn.com/logos/git-icon.svg" />](https://git-scm.com)
+[<img align="left" height="32" width="32" src="https://cdn.svgporn.com/logos/gitkraken.svg" />](https://www.gitkraken.com)
 <br />
 
 ### Textbook
@@ -19,9 +19,9 @@ The textbook for this class was Data Structures Essentials: Psueodocde with Pyth
 <br />
 
 ### VS Code Comment Anchors Extension
-I am utilizing the [Comment Anchors extension](https://marketplace.visualstudio.com/items?itemName=ExodiusStudios.comment-anchors) for Visual Studio Code which places anchors within comments to allow for easy navigation and the ability to track TODO's, code reviews, etc. 
+I am also using the [Comment Anchors extension](https://marketplace.visualstudio.com/items?itemName=ExodiusStudios.comment-anchors) for Visual Studio Code which places anchors within comments to allow for easy navigation and the ability to track TODO's, code reviews, etc. You may find the following tags intersperesed throughout the code in this repository: ANCHOR, TODO, FIXME, STUB, NOTE, REVIEW, SECTION, LINK, CELL, FUNCTION, CLASS
 
-A few custom anchors were added for project planning and issue tracking which include CLASS, CELL, and FUNCTION.
+For anyone using this extension, please note that CELL, FUNCTION, and CLASS are tags I defined myself. 
 <br />
 
 ___
@@ -59,10 +59,7 @@ The porfolio project for this class presented two options: The analysis of algor
 
 **Designed Problem** - There exists a pile of books and a series of bookshelves. The books must be placed on the bookshelves following a particular sorting schema, but each shelf can only hold a certain number of books. The books must be placed in sorted order without exceeding the limits of the shelves, and once placed, books will be added and removed. Each addition and removal will result in the books automatically adjusting themselves so no gap is left in the assortment and so no shelf is overcapacity. If a previous shelf has room, all the books should be shifted until only the last shelf containing books has accumulated any extra space within the system. The underlying data structure for the shelf storage is currently unknown, and the tradeoffs of various solutions should be explored.
 
-The project will asses the efficiency of list operations with the following implementations:
+The project assessed the efficiency of list operations with the following implementations:
 - A Python List
 - A Numpy Array
 - A Linked List
-- A Linked List with an AVL Search Tree
-
-*Note: This project is ongoing and will be completed by August 1st, 2021. Since this project is ongoing, the exact implementations and operations examined are subject to change.*
